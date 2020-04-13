@@ -162,12 +162,13 @@ class GANLoss(nn.Module):
             the calculated loss.
         """
         target_tensor = self.get_target_tensor(input, target_is_real)
-        return self.loss(input, target_tensor)
+        return self.loss(input, target_tensor.to(device))
     
 def update_learning_rate(scheduler, optimizer):
     scheduler.step()
     lr = optimizer.param_groups[0]['lr']
     print('learning rate = %.7f' % lr)  
+    return lr
 
 # learning rate decay
 def get_scheduler(optimizer):

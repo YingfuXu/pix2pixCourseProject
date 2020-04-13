@@ -12,7 +12,7 @@ from os.path import join, splitext
 #     print(index, item)
 
 def tensor2image(input_image, imtype=np.uint8, return_numpy=False, save_image_dir='None', tensor_normalized=True):
-    """"Converts a Tensor array into a numpy image array.
+    """"Converts a Tensor [C, H, W] into a numpy image array [H, W, C].
     Parameters:
         input_image (tensor) --  the input image tensor array
         imtype (type)        --  the desired type of the converted numpy array
@@ -107,33 +107,37 @@ class Image_Dataset(Dataset):
         # print(self.input_fullnames, self.target_fullnames)
         self.input_image_fullnames = [x for x in self.input_fullnames if is_image_file(x)] 
         self.target_image_fullnames = [x for x in self.target_fullnames if is_image_file(x)] 
+        
         # get the image numbers os.path.splitext; sort()的reverse = False 升序（默认）
-        self.input_image_fullnames.sort(key = lambda fullname: splitext(fullname)[0]) 
-        self.target_image_fullnames.sort(key = lambda fullname: splitext(fullname)[0]) 
+        # self.input_image_fullnames.sort(key = lambda fullname: splitext(fullname)[0]) 
+        # self.target_image_fullnames.sort(key = lambda fullname: splitext(fullname)[0]) 
+        self.input_image_fullnames.sort(key = lambda fullname: int(fullname.split('_')[0])) # for the deblur dataset
+        self.target_image_fullnames.sort(key = lambda fullname: int(fullname.split('_')[0]))
         # print(self.input_image_fullnames, self.target_image_fullnames)
-        if self.input_image_fullnames != self.target_image_fullnames:
-            print('Error! Image pairs names do not match!')
-        else:
-            self.image_fullnames = self.input_image_fullnames
+
+        # if self.input_image_fullnames != self.target_image_fullnames:
+        #     print('Error! Image pairs names do not match!')
+        # else:
+        #     self.image_fullnames = self.input_image_fullnames
 
         
     def __getitem__(self, index):
         if self.input_grayscale:
-            input_image_pil = Image.open(join(self.input_dir, self.image_fullnames[index])).convert('L')
+            input_image_pil = Image.open(join(self.input_dir, self.input_image_fullnames[index])).convert('L')
             input_img_tensor = img_transform_list(self.target_img_size, Normalize=True, convert2grayscale=True)(input_image_pil)
         else:
-            input_image_pil = Image.open(join(self.input_dir, self.image_fullnames[index])).convert('RGB')
+            input_image_pil = Image.open(join(self.input_dir, self.input_image_fullnames[index])).convert('RGB')
             input_img_tensor = img_transform_list(self.target_img_size, Normalize=True)(input_image_pil)
 
         if self.target_grayscale:
-            target_image_pil = Image.open(join(self.target_dir, self.image_fullnames[index])).convert('L')
+            target_image_pil = Image.open(join(self.target_dir, self.target_image_fullnames[index])).convert('L')
             target_img_tensor = img_transform_list(self.target_img_size, Normalize=True, convert2grayscale=True)(target_image_pil)
         else:
-            target_image_pil = Image.open(join(self.target_dir, self.image_fullnames[index])).convert('RGB')
+            target_image_pil = Image.open(join(self.target_dir, self.target_image_fullnames[index])).convert('RGB')
             target_img_tensor = img_transform_list(self.target_img_size, Normalize=True)(target_image_pil)
         # print(img.getbands(),img.size) # ('L',) ('R', 'G', 'B')
         
-        filename = self.image_fullnames[index]
+        filename = self.input_image_fullnames[index]
         # print(filename)
 
         return input_img_tensor, target_img_tensor, filename
