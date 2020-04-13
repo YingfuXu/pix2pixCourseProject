@@ -1,8 +1,12 @@
 from libraries import *
 
 # change the dataset in the current directory
-dataset_dir = '../../../data/yingfu/blur/' # ../../../data/yingfu/blur/  ./datasets/
-project = 'cGAN_deblur_simplified'
+# dataset_dir = '../../../data/yingfu/blur/' # ../../../data/yingfu/blur/  ./datasets/
+# project = 'cGAN_deblur_simplified'
+
+dataset_dir = '../../../data/yingfu/depth/' # ../../../data/yingfu/depth/  ./datasets/depth_test_data/
+project = 'cGAN_depth_simplified'
+
 data_train_dir = dataset_dir + 'train'
 data_test_dir = dataset_dir + 'test' 
 data_visual_dir = dataset_dir + 'visualization'
@@ -27,15 +31,15 @@ test_batch_size = 1
 target_img_size = (256, 256)
 
 # number of channels
-input_nc = 3
+input_nc = 1
 output_nc = 3
 # the number of filters in the first conv layer
 ngf = 64
 ndf = 64
 
 epoch_count = 1
-n_epoch = 10 # for deblur dataset 22,509 pairs
-n_epoch_decay = 10
+n_epoch = 80 # for deblur dataset 22,509 pairs
+n_epoch_decay = 80
 
 lr=0.0002
 lr_policy='lambda'

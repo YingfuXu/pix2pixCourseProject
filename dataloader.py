@@ -109,10 +109,10 @@ class Image_Dataset(Dataset):
         self.target_image_fullnames = [x for x in self.target_fullnames if is_image_file(x)] 
         
         # get the image numbers os.path.splitext; sort()的reverse = False 升序（默认）
-        # self.input_image_fullnames.sort(key = lambda fullname: splitext(fullname)[0]) 
-        # self.target_image_fullnames.sort(key = lambda fullname: splitext(fullname)[0]) 
-        self.input_image_fullnames.sort(key = lambda fullname: int(fullname.split('_')[0])) # for the deblur dataset
-        self.target_image_fullnames.sort(key = lambda fullname: int(fullname.split('_')[0]))
+        self.input_image_fullnames.sort(key = lambda fullname: int(splitext(fullname)[0])) 
+        self.target_image_fullnames.sort(key = lambda fullname: int(splitext(fullname)[0])) 
+        # self.input_image_fullnames.sort(key = lambda fullname: int(fullname.split('_')[0])) # for the deblur dataset: 1_A.jpg
+        # self.target_image_fullnames.sort(key = lambda fullname: int(fullname.split('_')[0]))
         # print(self.input_image_fullnames, self.target_image_fullnames)
 
         # if self.input_image_fullnames != self.target_image_fullnames:

@@ -10,10 +10,14 @@ if not os.path.exists(project_dir):
 if not os.path.exists(checkpoints_dir):
     os.mkdir(checkpoints_dir)
 
-# define training set
-training_set = Image_Dataset('training_set', target_img_size, data_train_dir, input_grayscale=False)
+# define training set: default input_grayscale=False, target_grayscale=False
+if input_nc == 1:
+    grayscale = True
+else:
+    grayscale = False
+training_set = Image_Dataset('training_set', target_img_size, data_train_dir, input_grayscale=grayscale)
 # define visualization set (run the model in training to visualize how it works on a small number of the same images)
-visual_set = Image_Dataset('visualization_set', target_img_size, data_visual_dir, input_grayscale=False)
+visual_set = Image_Dataset('visualization_set', target_img_size, data_visual_dir, input_grayscale=grayscale)
 
 training_data_loader = DataLoader(dataset=training_set, num_workers=threads, batch_size=batch_size, shuffle=True)
 # testing_data_loader = DataLoader(dataset=DatasetFromFolder(dataroot_test, direction), num_workers=threads, batch_size=test_batch_size)
