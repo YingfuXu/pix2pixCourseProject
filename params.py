@@ -31,7 +31,7 @@ test_batch_size = 1
 target_img_size = (256, 256)
 
 # number of channels
-input_nc = 1
+input_nc = 1 # !!
 output_nc = 3
 # the number of filters in the first conv layer
 ngf = 64
@@ -53,8 +53,8 @@ lambda_L1 = 100.0
 # torch.manual_seed(seed)
 
 # this is the cpu version:
-# device = torch.device("cpu")
+device = torch.device("cpu")
 
 # if using the gpu, open the following code:
 # torch.cuda.manual_seed(seed)
-device = torch.device("cuda: 1")
+# device = torch.device("cuda: 1")
