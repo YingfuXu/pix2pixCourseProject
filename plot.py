@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image, ImageOps
 import glob
 from os import listdir
+from os.path import join, splitext
 
 
 def plot_PSNRs_SSIMs(data_dirs):
@@ -34,16 +35,20 @@ def plot_PSNRs_SSIMs(data_dirs):
 
     plt.subplot(2, 1, 1)
     plt.title('PSNR Results')
-    PSNR_unet = plt.plot(PSNR_epochs[0], PSNRs[0], color='green', label='unet')
-    PSNR_resnet = plt.plot(PSNR_epochs[1], PSNRs[1], color='blue', label='resnet_9blocks')
-    plt.legend()
+    PSNR_unet = plt.plot(PSNR_epochs[0], PSNRs[0], color='green', label='unet lr=0.0002')
+    PSNR_unet0005 = plt.plot(PSNR_epochs[2], PSNRs[2], color='red', label='unet lr=0.0005')
+    PSNR_unet_noDecay = plt.plot(PSNR_epochs[3], PSNRs[3], color='black', label='unet lr=0.0002 no decay')
+    PSNR_resnet = plt.plot(PSNR_epochs[1], PSNRs[1], color='blue', label='resnet_9blocks lr=0.0002')
+    # plt.legend()
     plt.xlabel('epoch')
     plt.ylabel('PSNR')
 
     plt.subplot(2, 1, 2)
     plt.title('SSIM Results')
-    SSIM_unet = plt.plot(SSIMs_epochs[0], SSIMs[0], color='green', label='unet')
-    SSIM_resnet = plt.plot(SSIMs_epochs[1], SSIMs[1], color='blue', label='resnet_9blocks')
+    SSIM_unet = plt.plot(SSIMs_epochs[0], SSIMs[0], color='green', label='unet lr=0.0002')
+    SSIM_unet0005 = plt.plot(SSIMs_epochs[2], SSIMs[2], color='red', label='unet lr=0.0005')
+    SSIM_unet_noDecay = plt.plot(SSIMs_epochs[3], SSIMs[3], color='black', label='unet lr=0.0002 no decay')
+    SSIM_resnet = plt.plot(SSIMs_epochs[1], SSIMs[1], color='blue', label='resnet_9blocks lr=0.0002')
     plt.legend()
     plt.xlabel('epoch')
     plt.ylabel('SSIM')
@@ -73,7 +78,7 @@ def plot_Loss(data_dirs):
         # print(total_iterations_array.shape[0])
         # print(Loss_epochs_list)
         # calculate iterations
-        total_train_data = 22509
+        total_train_data = 3300 #22509
         Losses_iterations = np.zeros(total_iterations_array.shape[0])
         for i in range(total_iterations_array.shape[0]):
             Losses_iterations[i] = (total_iterations_array[i, 0] - 1) * total_train_data + total_iterations_array[i, 1]
@@ -105,7 +110,8 @@ def plot_Loss(data_dirs):
     plt.plot(iterations[0], L1_Losses[0], color='red', label='L1_Loss')
     plt.plot(iterations[0], GAN_Losses[0], color='blue', label='GAN_Loss')
     plt.plot(iterations[0], D_Losses[0], color='green', label='D_Loss')
-    plt.xlim(0, 50000)
+    plt.xlim(0, 100000)
+    plt.ylim(0, 40)
     plt.legend()
     # plt.xlabel('iteration')
     plt.ylabel('Loss')
@@ -118,8 +124,8 @@ def plot_Loss(data_dirs):
     plt.plot(iterations[0], D_Losses[0], color='green', label='D_Loss')
     plt.plot(iterations[0], GAN_Losses[0], color='blue', label='GAN_Loss')
     # plt.plot(iterations[0], L1_Losses[0], color='red', label='L1_Losses')
-    plt.xlim(0, 50000)
-    plt.ylim(0, 1.5)
+    plt.xlim(0, 100000)
+    plt.ylim(0, 1.75)
     # plt.legend()
     plt.xlabel('iteration')
     plt.ylabel('Loss')
@@ -191,7 +197,7 @@ def splice_test_images(image_dir, number_of_images, imageNameSave):
     input_fullnames = listdir(image_dir)
 
     # self.input_fullnames.sort(key = lambda fullname: int(splitext(fullname)[0])) 
-    # input_fullnames.sort(key = lambda fullname: int(fullname.split('_')[3]))
+    # input_fullnames.sort(key = lambda fullname: int(splitext(fullname)[0].split('_')[0]))
 
     # print(input_fullnames)
 
@@ -219,13 +225,22 @@ def splice_test_images(image_dir, number_of_images, imageNameSave):
 
 if __name__ == '__main__':
     data_dirs = []
-    data_dirs += ['./GPU_result/cGAN_deblur_simplified_unet/checkpoint/']
-    data_dirs += ['./GPU_result/cGAN_deblur_simplified_resnet/checkpoint/']
+    data_dirs += ['../pix2pixFiles/GPU_result/cGAN_deblur_simplified_unet/checkpoint/']
+    data_dirs += ['../pix2pixFiles/GPU_result/cGAN_deblur_simplified_resnet/checkpoint/']
+    data_dirs += ['../pix2pixFiles/GPU_result/cGAN_deblur_simplified_0005/checkpoint/']
+    data_dirs += ['../pix2pixFiles/GPU_result/cGAN_deblur_simplified_0002NoDecay/checkpoint/']
+
+    # data_dirs = []
+    # data_dirs += ['../pix2pixFiles/GPU_result/cGAN_depth_simplified_unet/checkpoint/']
+    # data_dirs += ['../pix2pixFiles/GPU_result/cGAN_depth_simplified_resnet/checkpoint/']
 
     # plot_PSNRs_SSIMs(data_dirs)
+
+    data_dirs = ['../pix2pixFiles/GPU_result/cGAN_depth_simplified_unet/checkpoint/']
     # plot_Loss(data_dirs)
 
     splice_epoch_images_dir = './GPU_result/cGAN_deblur_simplified_unet/checkpoint/image_for_comparison/'
+
     # splice_epoch_images(splice_epoch_images_dir)
 
     
@@ -238,8 +253,12 @@ if __name__ == '__main__':
 
     splice_test_images_dir = './test/netG_unet_256_epoch_10_10_lr_0005/YOLO/'
     splice_test_images_dir = './depth_New_test_sample/netG_resnet_9blocks_epoch_80_80_lr_0002/YOLO/'
+
+    splice_test_images_dir = '../pix2pixFiles/GPU_result/cGAN_depth_simplified_unet/checkpoint/epoch_predict_images/epoch160/YOLO/'
+    splice_test_images_dir = '../pix2pixFiles/GPU_result/cGAN_deblur_simplified_0002NoDecay/checkpoint/visualSetSamples/YOLO/'
+    splice_test_images_dir = '../pix2pixFiles/test_NewBlur/netG_unet_256_epoch_20_0_lr_0002/YOLO/'
     
-    splice_test_images(splice_test_images_dir, 8, 'depth_New_test_sample_netG_resnet_9blocks_epoch_80_80_lr_0002.png')
+    splice_test_images(splice_test_images_dir, 9, 'netG_unet_256_epoch_20_0_lr_0002.png')
     
     
 
