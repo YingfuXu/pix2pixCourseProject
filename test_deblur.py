@@ -4,8 +4,8 @@ from dataloader import *
 from networks import define_G, define_D
 from networkBase import GANLoss, get_scheduler, update_learning_rate
 
-model_name = 'netG_resnet_9blocks_epoch_10_10_lr_0002'
-model_path = "../pix2pixFiles/GPU_result/cGAN_deblur_simplified_resnet/checkpoint/" + model_name + ".pth"
+model_name = 'netG_unet_256_epoch_20_0_lr_0002'
+model_path = "../pix2pixFiles/GPU_result/cGAN_deblur_simplified_0002NoDecay/checkpoint/" + model_name + ".pth"
 data_test_dir = "../datasets/blur/new/test/"
 test_set = Image_Dataset('test_set', target_img_size, data_test_dir, input_grayscale=False)
 
